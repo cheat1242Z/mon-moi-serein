@@ -136,7 +136,8 @@ All colors MUST be HSL.
   }
   
   .breathing-circle {
-    @apply rounded-full border-4 border-primary/20 transition-all duration-[4s] ease-in-out;
+    @apply rounded-full border-4 border-primary/20;
+    transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .breathing-active {
