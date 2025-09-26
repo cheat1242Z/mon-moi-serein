@@ -13,14 +13,14 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { to: '/', icon: Home, label: 'Accueil' },
-  { to: '/mood', icon: Heart, label: 'Humeur' },
-  { to: '/diary', icon: BookOpen, label: 'Journal' },
-  { to: '/planner', icon: Calendar, label: 'Planning' },
-  { to: '/pomodoro', icon: Timer, label: 'Focus' },
-  { to: '/wellness', icon: Activity, label: 'Bien-être' },
-  { to: '/music', icon: Music, label: 'Musique' },
-  { to: '/analytics', icon: BarChart3, label: 'Analyses' },
+  { to: '/dashboard', icon: Home, label: 'Accueil' },
+  { to: '/dashboard/mood', icon: Heart, label: 'Humeur' },
+  { to: '/dashboard/diary', icon: BookOpen, label: 'Journal' },
+  { to: '/dashboard/planner', icon: Calendar, label: 'Planning' },
+  { to: '/dashboard/pomodoro', icon: Timer, label: 'Focus' },
+  { to: '/dashboard/wellness', icon: Activity, label: 'Bien-être' },
+  { to: '/dashboard/music', icon: Music, label: 'Musique' },
+  { to: '/dashboard/analytics', icon: BarChart3, label: 'Analyses' },
 ];
 
 export const Navigation = () => {
