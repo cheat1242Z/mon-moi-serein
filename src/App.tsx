@@ -7,6 +7,7 @@ import { Layout } from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import MoodEntry from "./pages/MoodEntry";
 import Wellness from "./pages/Wellness";
+import Music from "./pages/Music";
 import Analytics from "./pages/Analytics";
 import Diary from "./pages/Diary";
 import Planner from "./pages/Planner";
@@ -26,6 +27,7 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="mood" element={<MoodEntry />} />
             <Route path="wellness" element={<Wellness />} />
+            <Route path="music" element={<Music />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="diary" element={<Diary />} />
             <Route path="planner" element={<Planner />} />

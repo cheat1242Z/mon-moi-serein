@@ -7,7 +7,8 @@ import {
   Calendar, 
   Timer, 
   Activity, 
-  BarChart3 
+  BarChart3,
+  Music
 } from 'lucide-react';
 
 const navItems = [
@@ -17,6 +18,7 @@ const navItems = [
   { to: '/planner', icon: Calendar, label: 'Planning' },
   { to: '/pomodoro', icon: Timer, label: 'Focus' },
   { to: '/wellness', icon: Activity, label: 'Bien-être' },
+  { to: '/music', icon: Music, label: 'Musique' },
   { to: '/analytics', icon: BarChart3, label: 'Analyses' },
 ];
 
