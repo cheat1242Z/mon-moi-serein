@@ -22,6 +22,14 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
+        },
+        wellness: {
+          calm: "hsl(var(--wellness-calm))",
+          energy: "hsl(var(--wellness-energy))",
+          balance: "hsl(var(--wellness-balance))",
+          focus: "hsl(var(--wellness-focus))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
