@@ -13,8 +13,21 @@ export default function DiaryEntry() {
   const [mood, setMood] = useState(3);
 
   const handleSave = () => {
-    // Here we would normally save to a backend
-    // For now, we'll just navigate back to the diary
+    if (!title.trim() || !content.trim()) return;
+
+    const newEntry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('fr-FR'),
+      title: title.trim(),
+      content: content.trim(),
+      mood
+    };
+
+    // Get existing entries from localStorage
+    const existingEntries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+    const updatedEntries = [newEntry, ...existingEntries];
+    localStorage.setItem('diaryEntries', JSON.stringify(updatedEntries));
+
     navigate('/dashboard/diary');
   };
 

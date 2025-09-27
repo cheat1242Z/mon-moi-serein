@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus, BookOpen, Search } from 'lucide-react';
@@ -23,8 +23,17 @@ const mockEntries = [
 ];
 
 export default function Diary() {
-  const [entries] = useState(mockEntries);
+  const [entries, setEntries] = useState(mockEntries);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Load entries from localStorage on component mount
+  useEffect(() => {
+    const savedEntries = localStorage.getItem('diaryEntries');
+    if (savedEntries) {
+      const parsedEntries = JSON.parse(savedEntries);
+      setEntries([...parsedEntries, ...mockEntries]);
+    }
+  }, []);
 
   const getMoodEmoji = (mood: number) => {
     const emojis = ['😔', '😕', '😐', '🙂', '😊'];

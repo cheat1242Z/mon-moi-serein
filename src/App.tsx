@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import Diary from "./pages/Diary";
 import DiaryEntry from "./pages/DiaryEntry";
 import Planner from "./pages/Planner";
+import TaskEntry from "./pages/TaskEntry";
 import Pomodoro from "./pages/Pomodoro";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="diary" element={<Diary />} />
             <Route path="diary/new" element={<DiaryEntry />} />
             <Route path="planner" element={<Planner />} />
+            <Route path="task-entry" element={<TaskEntry />} />
             <Route path="pomodoro" element={<Pomodoro />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

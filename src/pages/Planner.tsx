@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Calendar, Clock, Target, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Clock, Target, CheckCircle, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Mock data for demonstration
@@ -63,10 +63,29 @@ export default function Planner() {
   const [tasks, setTasks] = useState(mockTasks);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // Load tasks from localStorage on component mount
+  useEffect(() => {
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+      const parsedTasks = JSON.parse(savedTasks);
+      setTasks([...mockTasks, ...parsedTasks]);
+    }
+  }, []);
+
+  // Save tasks to localStorage whenever tasks change
+  useEffect(() => {
+    const customTasks = tasks.filter(task => task.id > 1000); // Only save custom tasks
+    localStorage.setItem('tasks', JSON.stringify(customTasks));
+  }, [tasks]);
+
   const toggleTask = (taskId: number) => {
     setTasks(prev => prev.map(task => 
       task.id === taskId ? { ...task, completed: !task.completed } : task
     ));
+  };
+
+  const deleteTask = (taskId: number) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
   const completedTasks = tasks.filter(task => task.completed).length;
@@ -90,10 +109,12 @@ export default function Planner() {
           <h1 className="text-xl font-bold">Planificateur</h1>
           <p className="text-muted-foreground">Organisez votre journée</p>
         </div>
-        <Button className="bg-gradient-to-r from-primary to-primary-light text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Nouvelle tâche
-        </Button>
+        <Link to="/dashboard/task-entry">
+          <Button className="bg-gradient-to-r from-primary to-primary-light text-white">
+            <Plus className="w-4 h-4 mr-2" />
+            Nouvelle tâche
+          </Button>
+        </Link>
       </div>
 
       {/* Progress Overview */}
@@ -165,9 +186,23 @@ export default function Planner() {
                       <h3 className={`font-semibold ${task.completed ? 'line-through text-muted-foreground' : ''}`}>
                         {task.title}
                       </h3>
-                      <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>{task.time}</span>
+                      <div className="flex items-center space-x-2">
+                        {task.time && (
+                          <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                            <Clock className="w-4 h-4" />
+                            <span>{task.time}</span>
+                          </div>
+                        )}
+                        {task.id > 1000 && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => deleteTask(task.id)}
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <p className={`text-sm ${task.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}>
