@@ -85,7 +85,7 @@ export default function Dashboard() {
           ) : (
             <div className="text-center space-y-4">
               <p className="text-muted-foreground">Comment vous sentez-vous aujourd'hui ?</p>
-              <Link to="/mood">
+              <Link to="/dashboard/mood">
                 <Button className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white">
                   <Plus className="w-4 h-4 mr-2" />
                   Enregistrer mon humeur

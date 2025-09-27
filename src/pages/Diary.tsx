@@ -49,10 +49,12 @@ export default function Diary() {
           <h1 className="text-xl font-bold">Journal Intime</h1>
           <p className="text-muted-foreground">Vos pensées et réflexions</p>
         </div>
-        <Button className="bg-gradient-to-r from-primary to-primary-light text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Nouvelle entrée
-        </Button>
+        <Link to="/dashboard/diary/new">
+          <Button className="bg-gradient-to-r from-primary to-primary-light text-white">
+            <Plus className="w-4 h-4 mr-2" />
+            Nouvelle entrée
+          </Button>
+        </Link>
       </div>
 
       {/* Search */}

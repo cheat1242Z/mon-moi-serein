@@ -11,6 +11,7 @@ import Wellness from "./pages/Wellness";
 import Music from "./pages/Music";
 import Analytics from "./pages/Analytics";
 import Diary from "./pages/Diary";
+import DiaryEntry from "./pages/DiaryEntry";
 import Planner from "./pages/Planner";
 import Pomodoro from "./pages/Pomodoro";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="music" element={<Music />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="diary" element={<Diary />} />
+            <Route path="diary/new" element={<DiaryEntry />} />
             <Route path="planner" element={<Planner />} />
             <Route path="pomodoro" element={<Pomodoro />} />
           </Route>
