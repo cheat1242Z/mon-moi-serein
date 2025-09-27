@@ -5,6 +5,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Plus, Clock, Target, CheckCircle, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for demonstration
 const mockTasks = [
@@ -62,30 +64,101 @@ const priorities = {
 export default function Planner() {
   const [tasks, setTasks] = useState(mockTasks);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  // Load tasks from localStorage on component mount
+  // Load tasks from Supabase on component mount
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-      const parsedTasks = JSON.parse(savedTasks);
-      setTasks([...mockTasks, ...parsedTasks]);
-    }
+    loadTasks();
   }, []);
 
-  // Save tasks to localStorage whenever tasks change
-  useEffect(() => {
-    const customTasks = tasks.filter(task => task.id > 1000); // Only save custom tasks
-    localStorage.setItem('tasks', JSON.stringify(customTasks));
-  }, [tasks]);
+  const loadTasks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  const toggleTask = (taskId: number) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+      if (error) throw error;
+
+      const formattedTasks = data.map(task => ({
+        id: task.id,
+        title: task.title,
+        description: task.description || '',
+        time: task.time || '',
+        category: task.category,
+        priority: task.priority,
+        completed: task.completed
+      }));
+
+      setTasks([...formattedTasks, ...mockTasks]);
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+      setTasks(mockTasks);
+    }
   };
 
-  const deleteTask = (taskId: number) => {
+  const toggleTask = async (taskId: number) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const newCompleted = !task.completed;
+    
+    // Update local state immediately
+    setTasks(prev => prev.map(t => 
+      t.id === taskId ? { ...t, completed: newCompleted } : t
+    ));
+
+    // Update in Supabase if it's a custom task (from database)
+    if (taskId > 1000) {
+      try {
+        const { error } = await supabase
+          .from('tasks')
+          .update({ completed: newCompleted })
+          .eq('id', taskId);
+
+        if (error) throw error;
+      } catch (error) {
+        // Revert local state on error
+        setTasks(prev => prev.map(t => 
+          t.id === taskId ? { ...t, completed: !newCompleted } : t
+        ));
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour la tâche.",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const deleteTask = async (taskId: number) => {
+    // Remove from local state immediately
     setTasks(prev => prev.filter(task => task.id !== taskId));
+
+    // Delete from Supabase if it's a custom task
+    if (taskId > 1000) {
+      try {
+        const { error } = await supabase
+          .from('tasks')
+          .delete()
+          .eq('id', taskId);
+
+        if (error) throw error;
+        
+        toast({
+          title: "Tâche supprimée",
+          description: "La tâche a été supprimée avec succès.",
+        });
+      } catch (error) {
+        // Reload tasks on error
+        loadTasks();
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer la tâche.",
+          variant: "destructive"
+        });
+      }
+    }
   };
 
   const completedTasks = tasks.filter(task => task.completed).length;

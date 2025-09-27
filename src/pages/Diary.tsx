@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus, BookOpen, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 // Mock data for demonstration
 const mockEntries = [
@@ -26,14 +27,34 @@ export default function Diary() {
   const [entries, setEntries] = useState(mockEntries);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Load entries from localStorage on component mount
+  // Load entries from Supabase on component mount
   useEffect(() => {
-    const savedEntries = localStorage.getItem('diaryEntries');
-    if (savedEntries) {
-      const parsedEntries = JSON.parse(savedEntries);
-      setEntries([...parsedEntries, ...mockEntries]);
-    }
+    loadEntries();
   }, []);
+
+  const loadEntries = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('diary_entries')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const formattedEntries = data.map(entry => ({
+        id: entry.id,
+        date: entry.created_at,
+        title: entry.title,
+        content: entry.content,
+        mood: entry.mood
+      }));
+
+      setEntries([...formattedEntries, ...mockEntries]);
+    } catch (error) {
+      console.error('Error loading entries:', error);
+      setEntries(mockEntries);
+    }
+  };
 
   const getMoodEmoji = (mood: number) => {
     const emojis = ['😔', '😕', '😐', '🙂', '😊'];

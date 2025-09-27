@@ -5,30 +5,51 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DiaryEntry() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mood, setMood] = useState(3);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim() || !content.trim()) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase
+        .from('diary_entries')
+        .insert([
+          {
+            title: title.trim(),
+            content: content.trim(),
+            mood,
+            created_at: new Date().toISOString()
+          }
+        ]);
 
-    const newEntry = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString('fr-FR'),
-      title: title.trim(),
-      content: content.trim(),
-      mood
-    };
+      if (error) throw error;
 
-    // Get existing entries from localStorage
-    const existingEntries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
-    const updatedEntries = [newEntry, ...existingEntries];
-    localStorage.setItem('diaryEntries', JSON.stringify(updatedEntries));
+      toast({
+        title: "Entrée sauvegardée",
+        description: "Votre entrée a été ajoutée au journal.",
+      });
 
-    navigate('/dashboard/diary');
+      navigate('/dashboard/diary');
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder l'entrée.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const moodEmojis = ['😔', '😕', '😐', '🙂', '😊'];
@@ -100,7 +121,7 @@ export default function DiaryEntry() {
           <Button 
             onClick={handleSave}
             className="w-full bg-gradient-to-r from-primary to-primary-light text-white"
-            disabled={!title.trim() || !content.trim()}
+            disabled={!title.trim() || !content.trim() || isLoading}
           >
             <Save className="w-4 h-4 mr-2" />
             Enregistrer l'entrée

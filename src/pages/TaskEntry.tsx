@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const categories = [
   { id: 'travail', label: 'Travail', icon: '💼' },
@@ -22,31 +24,51 @@ const priorities = [
 
 export default function TaskEntry() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [time, setTime] = useState('');
   const [category, setCategory] = useState('');
   const [priority, setPriority] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim() || !category || !priority) return;
 
-    const newTask = {
-      id: Date.now(),
-      title: title.trim(),
-      description: description.trim(),
-      time,
-      category,
-      priority,
-      completed: false
-    };
+    setIsLoading(true);
 
-    // Get existing tasks from localStorage
-    const existingTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const updatedTasks = [...existingTasks, newTask];
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .insert([
+          {
+            title: title.trim(),
+            description: description.trim(),
+            time,
+            category,
+            priority,
+            completed: false,
+            created_at: new Date().toISOString()
+          }
+        ]);
 
-    navigate('/dashboard/planner');
+      if (error) throw error;
+
+      toast({
+        title: "Tâche créée",
+        description: "Votre tâche a été ajoutée au planificateur.",
+      });
+
+      navigate('/dashboard/planner');
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la tâche.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -144,7 +166,7 @@ export default function TaskEntry() {
           <Button 
             onClick={handleSave}
             className="w-full bg-gradient-to-r from-primary to-primary-light text-white"
-            disabled={!title.trim() || !category || !priority}
+            disabled={!title.trim() || !category || !priority || isLoading}
           >
             <Save className="w-4 h-4 mr-2" />
             Créer la tâche
