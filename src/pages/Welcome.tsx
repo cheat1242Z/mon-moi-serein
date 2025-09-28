@@ -1,73 +1,108 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Heart, Users, BookOpen, Gift, ArrowRight, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const Welcome = () => {
+export default function Welcome() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-wellness-calm via-background to-wellness-balance flex items-center justify-center p-4">
-      <div className="max-w-md w-full text-center space-y-8">
-        {/* Logo et titre */}
-        <div className="space-y-4">
-          <div className="mx-auto w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6">
-            <Heart className="w-10 h-10 text-primary animate-pulse" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center space-y-6 mb-16">
+          <div className="flex justify-center mb-6">
+            <div className="bg-gradient-to-br from-blue-500 to-green-500 p-4 rounded-full">
+              <Heart className="w-12 h-12 text-white" />
+            </div>
           </div>
-          
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-wellness-energy bg-clip-text text-transparent">
-            Serenity
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            DiabCare
           </h1>
-          
-          <p className="text-lg text-muted-foreground font-medium">
-            Votre compagnon de bien-être mental
+          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
+            Votre communauté de soutien pour bien vivre avec le diabète
           </p>
-        </div>
-
-        {/* Description */}
-        <div className="space-y-4 text-center">
-          <p className="text-foreground/80 leading-relaxed">
-            Découvrez une approche douce pour cultiver votre sérénité quotidienne, 
-            suivre votre humeur et développer des habitudes positives.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Conseils pratiques, motivation quotidienne, et solidarité pour tous ceux qui vivent avec le diabète
           </p>
-          
-          <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-wellness-calm rounded-full"></div>
-              <span>Suivi d'humeur</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-wellness-energy rounded-full"></div>
-              <span>Exercices bien-être</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-wellness-focus rounded-full"></div>
-              <span>Productivité zen</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bouton d'action */}
-        <div className="pt-4">
           <Button
             onClick={() => navigate('/dashboard')}
             size="lg"
-            className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-primary to-wellness-energy hover:from-primary/90 hover:to-wellness-energy/90 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-4 text-lg"
           >
-            <Sparkles className="mr-2 h-5 w-5" />
-            Commencer mon voyage
+            Rejoindre notre communauté
+            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
 
-        {/* Citation inspirante */}
-        <div className="pt-6 border-t border-border/50">
-          <p className="text-sm text-muted-foreground/80 italic">
-            "La sérénité n'est pas l'absence de tempête, mais la paix au milieu de la tempête."
-          </p>
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <Card className="text-center hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <BookOpen className="w-8 h-8 mx-auto text-blue-600 mb-2" />
+              <CardTitle className="text-lg">Conseils d'experts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Guides pratiques et conseils médicaux validés
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <Users className="w-8 h-8 mx-auto text-green-600 mb-2" />
+              <CardTitle className="text-lg">Communauté</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Partagez vos expériences et trouvez du soutien
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <Heart className="w-8 h-8 mx-auto text-red-500 mb-2" />
+              <CardTitle className="text-lg">Motivation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Citations inspirantes et histoires de réussite
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <Gift className="w-8 h-8 mx-auto text-purple-600 mb-2" />
+              <CardTitle className="text-lg">Faire un don</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Soutenez la recherche et aidez d'autres personnes
+              </p>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Testimonial Section */}
+        <Card className="max-w-4xl mx-auto bg-gradient-to-br from-blue-50 to-green-50">
+          <CardContent className="p-8 text-center">
+            <div className="flex justify-center mb-4">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              ))}
+            </div>
+            <blockquote className="text-xl italic mb-4">
+              "Grâce à DiabCare, j'ai appris à mieux gérer mon diabète au quotidien. 
+              La communauté m'apporte un soutien précieux et les conseils sont vraiment utiles."
+            </blockquote>
+            <cite className="text-muted-foreground">- Marie, membre depuis 2 ans</cite>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
-};
-
-export default Welcome;
+}

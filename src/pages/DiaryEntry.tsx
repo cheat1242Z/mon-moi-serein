@@ -3,56 +3,44 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DiaryEntry() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [mood, setMood] = useState(3);
+  const [question, setQuestion] = useState('');
+  const [situation, setSituation] = useState('');
+  const [category, setCategory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = async () => {
-    if (!title.trim() || !content.trim()) return;
+  const handleSubmit = async () => {
+    if (!question.trim() || !situation.trim()) return;
     
     setIsLoading(true);
     
-    try {
-      const { error } = await supabase
-        .from('diary_entries')
-        .insert([
-          {
-            title: title.trim(),
-            content: content.trim(),
-            mood,
-            created_at: new Date().toISOString()
-          }
-        ]);
-
-      if (error) throw error;
-
+    // Simuler l'envoi (remplacer par une vraie API plus tard)
+    setTimeout(() => {
       toast({
-        title: "Entrée sauvegardée",
-        description: "Votre entrée a été ajoutée au journal.",
+        title: "Question envoyée",
+        description: "Votre question a été transmise à notre équipe d'experts. Vous recevrez une réponse sous 24h.",
       });
 
       navigate('/dashboard/diary');
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder l'entrée.",
-        variant: "destructive"
-      });
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
-  const moodEmojis = ['😔', '😕', '😐', '🙂', '😊'];
+  const categories = [
+    'Alimentation et nutrition',
+    'Gestion de la glycémie',
+    'Activité physique',
+    'Médicaments et traitements',
+    'Complications',
+    'Vie quotidienne',
+    'Soutien psychologique'
+  ];
 
   return (
     <div className="p-4 space-y-6">
@@ -64,68 +52,98 @@ export default function DiaryEntry() {
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold">Nouvelle Entrée</h1>
-          <p className="text-muted-foreground">Partagez vos pensées du jour</p>
+          <h1 className="text-xl font-bold text-blue-700">Poser une question</h1>
+          <p className="text-muted-foreground">Nos experts vous répondent</p>
         </div>
+        <Heart className="w-6 h-6 text-red-500" />
       </div>
 
-      {/* Entry Form */}
+      {/* Question Form */}
       <Card className="wellness-card">
         <CardHeader>
-          <CardTitle>Votre journal</CardTitle>
+          <CardTitle className="text-blue-600">💬 Votre question aux experts</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Title */}
+          {/* Category */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Titre</label>
+            <label className="text-sm font-medium">Catégorie</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full p-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">Sélectionnez une catégorie</option>
+              {categories.map((cat, index) => (
+                <option key={index} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Question */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Votre question *</label>
             <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Donnez un titre à votre entrée..."
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Ex: Comment gérer ma glycémie après les repas ?"
               className="bg-input border-border"
             />
           </div>
 
-          {/* Mood Selection */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium">Comment vous sentez-vous ?</label>
-            <div className="flex space-x-2">
-              {moodEmojis.map((emoji, index) => (
-                <button
-                  key={index}
-                  onClick={() => setMood(index + 1)}
-                  className={`p-3 text-2xl rounded-xl transition-all ${
-                    mood === index + 1
-                      ? 'bg-primary/20 scale-110'
-                      : 'bg-input hover:bg-accent'
-                  }`}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Content */}
+          {/* Situation */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Vos pensées</label>
+            <label className="text-sm font-medium">Décrivez votre situation *</label>
             <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Écrivez vos pensées, sentiments, ou événements marquants du jour..."
-              className="min-h-[200px] bg-input border-border"
+              value={situation}
+              onChange={(e) => setSituation(e.target.value)}
+              placeholder="Donnez-nous des détails sur votre situation, vos habitudes, ce que vous avez déjà essayé..."
+              className="min-h-[150px] bg-input border-border"
             />
           </div>
 
-          {/* Save Button */}
+          {/* Info Box */}
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h4 className="font-medium text-blue-800 mb-2">ℹ️ Informations importantes</h4>
+            <ul className="text-sm text-blue-700 space-y-1">
+              <li>• Nos experts sont des professionnels de santé certifiés</li>
+              <li>• Vous recevrez une réponse personnalisée sous 24h</li>
+              <li>• Ce service ne remplace pas une consultation médicale</li>
+              <li>• En cas d'urgence, contactez immédiatement votre médecin</li>
+            </ul>
+          </div>
+
+          {/* Submit Button */}
           <Button 
-            onClick={handleSave}
-            className="w-full bg-gradient-to-r from-primary to-primary-light text-white"
-            disabled={!title.trim() || !content.trim() || isLoading}
+            onClick={handleSubmit}
+            className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white"
+            disabled={!question.trim() || !situation.trim() || isLoading}
           >
             <Save className="w-4 h-4 mr-2" />
-            Enregistrer l'entrée
+            {isLoading ? 'Envoi en cours...' : 'Envoyer ma question'}
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* FAQ Card */}
+      <Card className="wellness-card bg-gradient-to-br from-green-50 to-blue-50">
+        <CardHeader>
+          <CardTitle className="text-green-700">❓ Questions fréquentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="border-l-4 border-green-500 pl-3">
+              <p className="font-medium text-sm">Quelle est la glycémie normale ?</p>
+              <p className="text-xs text-muted-foreground">À jeun : 0,70 à 1,10 g/L</p>
+            </div>
+            <div className="border-l-4 border-blue-500 pl-3">
+              <p className="font-medium text-sm">Combien d'exercice par semaine ?</p>
+              <p className="text-xs text-muted-foreground">150 minutes d'activité modérée</p>
+            </div>
+            <div className="border-l-4 border-purple-500 pl-3">
+              <p className="font-medium text-sm">Que manger en cas d'hypoglycémie ?</p>
+              <p className="text-xs text-muted-foreground">15g de glucides rapides (3 sucres)</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

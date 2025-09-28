@@ -1,163 +1,90 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Clock, Target, CheckCircle, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Clock, Target, CheckCircle, Trash2, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock data for demonstration
-const mockTasks = [
+// Tâches de suivi pour diabétiques
+const diabeticTasks = [
   {
     id: 1,
-    title: 'Méditation matinale',
-    description: '10 minutes de méditation',
+    title: 'Contrôle glycémie matin',
+    description: 'Mesurer la glycémie à jeun',
     priority: 'high',
-    category: 'bien-être',
+    category: 'surveillance',
     completed: true,
-    time: '08:00'
+    time: '07:00'
   },
   {
     id: 2,
-    title: 'Réunion projet',
-    description: 'Discussion des objectifs Q1',
+    title: 'Prendre médicaments',
+    description: 'Metformine 500mg + vitamines',
     priority: 'high',
-    category: 'travail',
+    category: 'traitement',
     completed: false,
-    time: '10:00'
+    time: '08:00'
   },
   {
     id: 3,
-    title: 'Exercice physique',
-    description: '30 minutes de course',
+    title: 'Marche 30 minutes',
+    description: 'Activité physique modérée',
     priority: 'medium',
-    category: 'santé',
+    category: 'exercice',
     completed: false,
-    time: '18:00'
+    time: '16:00'
   },
   {
     id: 4,
-    title: 'Lecture du soir',
-    description: '20 pages de mon livre actuel',
-    priority: 'low',
-    category: 'personnel',
+    title: 'Contrôle glycémie soir',
+    description: '2h après le dîner',
+    priority: 'high',
+    category: 'surveillance',
     completed: false,
-    time: '20:00'
+    time: '20:30'
+  },
+  {
+    id: 5,
+    title: 'Noter alimentation',
+    description: 'Journal alimentaire quotidien',
+    priority: 'medium',
+    category: 'nutrition',
+    completed: false,
+    time: '21:00'
   }
 ];
 
 const categories = [
-  { id: 'travail', label: 'Travail', color: 'bg-blue-100 text-blue-700', icon: '💼' },
-  { id: 'santé', label: 'Santé', color: 'bg-green-100 text-green-700', icon: '🏥' },
-  { id: 'bien-être', label: 'Bien-être', color: 'bg-purple-100 text-purple-700', icon: '🧘‍♀️' },
-  { id: 'personnel', label: 'Personnel', color: 'bg-orange-100 text-orange-700', icon: '📚' }
+  { id: 'surveillance', label: 'Surveillance', color: 'bg-blue-100 text-blue-700', icon: '📊' },
+  { id: 'traitement', label: 'Traitement', color: 'bg-green-100 text-green-700', icon: '💊' },
+  { id: 'exercice', label: 'Exercice', color: 'bg-purple-100 text-purple-700', icon: '🏃‍♂️' },
+  { id: 'nutrition', label: 'Nutrition', color: 'bg-orange-100 text-orange-700', icon: '🥗' }
 ];
 
 const priorities = {
   high: { label: 'Urgent', color: 'bg-red-100 text-red-700' },
-  medium: { label: 'Moyen', color: 'bg-yellow-100 text-yellow-700' },
-  low: { label: 'Faible', color: 'bg-gray-100 text-gray-700' }
+  medium: { label: 'Important', color: 'bg-yellow-100 text-yellow-700' },
+  low: { label: 'Optionnel', color: 'bg-gray-100 text-gray-700' }
 };
 
 export default function Planner() {
-  const [tasks, setTasks] = useState(mockTasks);
+  const [tasks, setTasks] = useState(diabeticTasks);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Load tasks from Supabase on component mount
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const loadTasks = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      const formattedTasks = data.map(task => ({
-        id: task.id,
-        title: task.title,
-        description: task.description || '',
-        time: task.time || '',
-        category: task.category,
-        priority: task.priority,
-        completed: task.completed
-      }));
-
-      setTasks([...formattedTasks, ...mockTasks]);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
-      setTasks(mockTasks);
-    }
-  };
-
-  const toggleTask = async (taskId: number) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (!task) return;
-
-    const newCompleted = !task.completed;
-    
-    // Update local state immediately
+  const toggleTask = (taskId: number) => {
     setTasks(prev => prev.map(t => 
-      t.id === taskId ? { ...t, completed: newCompleted } : t
+      t.id === taskId ? { ...t, completed: !t.completed } : t
     ));
-
-    // Update in Supabase if it's a custom task (from database)
-    if (taskId > 1000) {
-      try {
-        const { error } = await supabase
-          .from('tasks')
-          .update({ completed: newCompleted })
-          .eq('id', taskId);
-
-        if (error) throw error;
-      } catch (error) {
-        // Revert local state on error
-        setTasks(prev => prev.map(t => 
-          t.id === taskId ? { ...t, completed: !newCompleted } : t
-        ));
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour la tâche.",
-          variant: "destructive"
-        });
-      }
-    }
-  };
-
-  const deleteTask = async (taskId: number) => {
-    // Remove from local state immediately
-    setTasks(prev => prev.filter(task => task.id !== taskId));
-
-    // Delete from Supabase if it's a custom task
-    if (taskId > 1000) {
-      try {
-        const { error } = await supabase
-          .from('tasks')
-          .delete()
-          .eq('id', taskId);
-
-        if (error) throw error;
-        
-        toast({
-          title: "Tâche supprimée",
-          description: "La tâche a été supprimée avec succès.",
-        });
-      } catch (error) {
-        // Reload tasks on error
-        loadTasks();
-        toast({
-          title: "Erreur",
-          description: "Impossible de supprimer la tâche.",
-          variant: "destructive"
-        });
-      }
+    
+    const task = tasks.find(t => t.id === taskId);
+    if (task && !task.completed) {
+      toast({
+        title: "Tâche complétée ! 🎉",
+        description: `Bravo pour avoir complété "${task.title}"`,
+      });
     }
   };
 
@@ -169,29 +96,28 @@ export default function Planner() {
     ? tasks.filter(task => task.category === selectedCategory)
     : tasks;
 
+  // Calcul des statistiques de santé
+  const surveillanceTasks = tasks.filter(t => t.category === 'surveillance');
+  const completedSurveillance = surveillanceTasks.filter(t => t.completed).length;
+
   return (
     <div className="p-4 space-y-6">
       {/* Header */}
       <div className="flex items-center space-x-4 py-4">
-        <Link to="/">
+        <Link to="/dashboard">
           <Button variant="ghost" size="icon" className="rounded-full">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold">Planificateur</h1>
-          <p className="text-muted-foreground">Organisez votre journée</p>
+          <h1 className="text-xl font-bold text-blue-700">Suivi Diabète</h1>
+          <p className="text-muted-foreground">Votre planning de soins quotidien</p>
         </div>
-        <Link to="/dashboard/task-entry">
-          <Button className="bg-gradient-to-r from-primary to-primary-light text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvelle tâche
-          </Button>
-        </Link>
+        <Activity className="w-6 h-6 text-green-500" />
       </div>
 
       {/* Progress Overview */}
-      <Card className="wellness-card">
+      <Card className="wellness-card bg-gradient-to-br from-blue-50 to-green-50">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -199,15 +125,27 @@ export default function Planner() {
               <p className="text-muted-foreground">{completedTasks}/{totalTasks} tâches complétées</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{Math.round(completionPercentage)}%</div>
-              <CheckCircle className="w-6 h-6 text-green-500 mx-auto mt-1" />
+              <div className="text-3xl font-bold text-green-600">{Math.round(completionPercentage)}%</div>
+              <CheckCircle className="w-8 h-8 text-green-500 mx-auto mt-1" />
             </div>
           </div>
-          <div className="w-full bg-muted rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
             <div 
-              className="bg-gradient-to-r from-primary to-primary-light h-3 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-blue-500 to-green-500 h-4 rounded-full transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="bg-white/50 p-3 rounded-lg">
+              <div className="text-lg font-bold text-blue-600">{completedSurveillance}/{surveillanceTasks.length}</div>
+              <div className="text-xs text-muted-foreground">Contrôles glycémie</div>
+            </div>
+            <div className="bg-white/50 p-3 rounded-lg">
+              <div className="text-lg font-bold text-green-600">
+                {tasks.filter(t => t.category === 'traitement' && t.completed).length}/{tasks.filter(t => t.category === 'traitement').length}
+              </div>
+              <div className="text-xs text-muted-foreground">Traitements pris</div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -220,7 +158,7 @@ export default function Planner() {
           onClick={() => setSelectedCategory(null)}
           className="rounded-full"
         >
-          Toutes
+          Toutes les tâches
         </Button>
         {categories.map(({ id, label, icon }) => (
           <Button
@@ -244,7 +182,7 @@ export default function Planner() {
           
           return (
             <Card key={task.id} className={`wellness-card transition-all duration-300 ${
-              task.completed ? 'opacity-60' : 'hover:scale-105'
+              task.completed ? 'opacity-70 border-green-200' : 'hover:shadow-lg'
             }`}>
               <CardContent className="p-4">
                 <div className="flex items-start space-x-3">
@@ -265,16 +203,6 @@ export default function Planner() {
                             <Clock className="w-4 h-4" />
                             <span>{task.time}</span>
                           </div>
-                        )}
-                        {task.id > 1000 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => deleteTask(task.id)}
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
                         )}
                       </div>
                     </div>
@@ -300,18 +228,18 @@ export default function Planner() {
         })}
       </div>
 
-      {/* Productivity Tip */}
-      <Card className="wellness-card bg-gradient-to-br from-wellness-focus/5 to-primary/5">
+      {/* Health Tips */}
+      <Card className="wellness-card bg-gradient-to-br from-green-50 to-blue-50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-primary">
+          <CardTitle className="flex items-center space-x-2 text-green-700">
             <Target className="w-5 h-5" />
-            <span>💡 Conseil productivité</span>
+            <span>💡 Conseil santé</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">
-            Commencez par les tâches les plus importantes le matin quand votre énergie est au maximum. 
-            N'hésitez pas à utiliser la technique Pomodoro pour rester concentré.
+          <p className="text-green-800">
+            Gardez toujours des comprimés de glucose ou des bonbons sur vous en cas d'hypoglycémie. 
+            Mesurez votre glycémie régulièrement et notez les résultats pour mieux comprendre vos variations.
           </p>
         </CardContent>
       </Card>

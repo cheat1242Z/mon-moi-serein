@@ -5,22 +5,22 @@ import {
   Home, 
   Heart, 
   BookOpen, 
-  Calendar, 
-  Timer, 
-  Activity, 
-  BarChart3,
-  Music
+  Users, 
+  Gift, 
+  MessageCircle,
+  Calendar,
+  Activity
 } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', icon: Home, label: 'Accueil' },
-  { to: '/dashboard/mood', icon: Heart, label: 'Humeur' },
-  { to: '/dashboard/diary', icon: BookOpen, label: 'Journal' },
-  { to: '/dashboard/planner', icon: Calendar, label: 'Planning' },
-  { to: '/dashboard/pomodoro', icon: Timer, label: 'Focus' },
-  { to: '/dashboard/wellness', icon: Activity, label: 'Bien-être' },
-  { to: '/dashboard/music', icon: Music, label: 'Musique' },
-  { to: '/dashboard/analytics', icon: BarChart3, label: 'Analyses' },
+  { to: '/dashboard/mood', icon: Heart, label: 'Motivation' },
+  { to: '/dashboard/diary', icon: BookOpen, label: 'Conseils' },
+  { to: '/dashboard/planner', icon: Calendar, label: 'Suivi' },
+  { to: '/dashboard/wellness', icon: Users, label: 'Communauté' },
+  { to: '/dashboard/music', icon: MessageCircle, label: 'Forum' },
+  { to: '/dashboard/pomodoro', icon: Activity, label: 'Exercices' },
+  { to: '/dashboard/analytics', icon: Gift, label: 'Don' },
 ];
 
 export const Navigation = () => {

@@ -1,138 +1,174 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { 
-  Heart, 
-  Calendar, 
-  Sparkles, 
-  TrendingUp,
-  Flame,
-  Plus
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Heart, TrendingUp, Users, BookOpen, Gift, MessageCircle, Calendar, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import serenityHero from '@/assets/serenity-hero.jpg';
 
 export default function Dashboard() {
-  const currentStreak = 7;
-  const todaysMood = null; // null means not recorded yet
-  
-  const moodEmojis = ['😔', '😕', '😐', '🙂', '😊'];
+  const todayTip = "Buvez un verre d'eau avant chaque repas pour mieux contrôler votre glycémie.";
   
   return (
     <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="text-center py-4">
-        <div className="flex items-center justify-center mb-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-light rounded-full flex items-center justify-center">
-            <Heart className="w-5 h-5 text-white" />
-          </div>
-        </div>
-        <h1 className="text-xl font-bold text-foreground">Serenity</h1>
-        <p className="text-sm text-muted-foreground">Votre compagnon bien-être</p>
+      {/* Welcome Header */}
+      <div className="text-center py-6">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+          Bienvenue sur DiabCare
+        </h1>
+        <p className="text-muted-foreground">
+          Votre compagnon quotidien pour bien vivre avec le diabète
+        </p>
       </div>
 
-      {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl mb-6">
-        <img 
-          src={serenityHero} 
-          alt="Paysage zen et serein"
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end">
-          <div className="p-6 text-white">
-            <h2 className="text-xl font-bold mb-1">Cultivez votre sérénité</h2>
-            <p className="text-white/90 text-sm">Prenez un moment pour vous aujourd'hui</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Streak Card */}
-      <Card className="wellness-card">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-lg">Série actuelle</h3>
-              <p className="text-muted-foreground">Jours consécutifs</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="streak-glow">
-                <div className="bg-gradient-to-r from-primary to-accent text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg">
-                  {currentStreak}
-                </div>
-              </div>
-              <Flame className="w-6 h-6 text-orange-500" />
-            </div>
-          </div>
-          <Progress value={(currentStreak % 30) * 3.33} className="mt-4" />
-        </CardContent>
-      </Card>
-
-      {/* Today's Mood */}
-      <Card className="wellness-card">
+      {/* Daily Tip */}
+      <Card className="bg-gradient-to-br from-blue-50 to-green-50 border-blue-200">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Heart className="w-5 h-5 text-primary" />
-            <span>Humeur du jour</span>
+          <CardTitle className="flex items-center text-blue-700">
+            <Bell className="w-5 h-5 mr-2" />
+            Conseil du jour
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {todaysMood ? (
-            <div className="text-center">
-              <div className="text-4xl mb-2">{moodEmojis[todaysMood - 1]}</div>
-              <p className="text-muted-foreground">Déjà enregistrée aujourd'hui</p>
-            </div>
-          ) : (
-            <div className="text-center space-y-4">
-              <p className="text-muted-foreground">Comment vous sentez-vous aujourd'hui ?</p>
-              <Link to="/dashboard/mood">
-                <Button className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Enregistrer mon humeur
-                </Button>
-              </Link>
-            </div>
-          )}
+          <p className="text-blue-800">{todayTip}</p>
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-4">
-        <Link to="/wellness">
-          <Card className="wellness-card hover:scale-105 transition-transform duration-300 cursor-pointer">
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-wellness-calm/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Sparkles className="w-6 h-6 text-wellness-calm" />
-              </div>
-              <h3 className="font-semibold">Respiration</h3>
-              <p className="text-sm text-muted-foreground">Exercice de calme</p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link to="/analytics">
-          <Card className="wellness-card hover:scale-105 transition-transform duration-300 cursor-pointer">
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-wellness-focus/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                <TrendingUp className="w-6 h-6 text-wellness-focus" />
-              </div>
-              <h3 className="font-semibold">Progrès</h3>
-              <p className="text-sm text-muted-foreground">Mes statistiques</p>
-            </CardContent>
-          </Card>
-        </Link>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <Users className="w-8 h-8 mx-auto text-blue-600 mb-2" />
+            <div className="text-2xl font-bold">15,234</div>
+            <p className="text-sm text-muted-foreground">Membres actifs</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <BookOpen className="w-8 h-8 mx-auto text-green-600 mb-2" />
+            <div className="text-2xl font-bold">142</div>
+            <p className="text-sm text-muted-foreground">Articles d'aide</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <MessageCircle className="w-8 h-8 mx-auto text-purple-600 mb-2" />
+            <div className="text-2xl font-bold">1,847</div>
+            <p className="text-sm text-muted-foreground">Messages d'entraide</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <Gift className="w-8 h-8 mx-auto text-red-500 mb-2" />
+            <div className="text-2xl font-bold">€28,450</div>
+            <p className="text-sm text-muted-foreground">Dons collectés</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Inspirational Quote */}
-      <Card className="wellness-card bg-gradient-to-br from-primary/5 to-accent/5">
-        <CardContent className="p-6 text-center">
-          <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-4 h-4 text-primary" />
+      {/* Main Actions */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center text-blue-600">
+              <BookOpen className="w-5 h-5 mr-2" />
+              Guides & Conseils
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Découvrez nos guides pratiques pour bien gérer votre diabète au quotidien.
+            </p>
+            <Link to="/dashboard/diary">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                Explorer les conseils
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center text-green-600">
+              <Heart className="w-5 h-5 mr-2" />
+              Motivation quotidienne
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Histoires inspirantes et motivation pour vous accompagner chaque jour.
+            </p>
+            <Link to="/dashboard/mood">
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Trouver l'inspiration
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center text-purple-600">
+              <Users className="w-5 h-5 mr-2" />
+              Communauté
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Échangez avec d'autres personnes qui vivent les mêmes défis.
+            </p>
+            <Link to="/dashboard/wellness">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                Rejoindre la communauté
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center text-red-500">
+              <Gift className="w-5 h-5 mr-2" />
+              Faire un don
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Soutenez la recherche et aidez d'autres personnes diabétiques.
+            </p>
+            <Link to="/dashboard/analytics">
+              <Button className="w-full bg-red-500 hover:bg-red-600">
+                Faire un don
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Latest News */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <TrendingUp className="w-5 h-5 mr-2" />
+            Actualités récentes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="border-l-4 border-blue-500 pl-4">
+              <h4 className="font-semibold">Nouvelle étude sur l'activité physique</h4>
+              <p className="text-sm text-muted-foreground">
+                Des recherches récentes montrent l'impact positif de 30 minutes d'exercice quotidien sur le contrôle glycémique.
+              </p>
+            </div>
+            <div className="border-l-4 border-green-500 pl-4">
+              <h4 className="font-semibold">Recettes diabétiques de saison</h4>
+              <p className="text-sm text-muted-foreground">
+                Découvrez nos nouvelles recettes équilibrées pour les fêtes de fin d'année.
+              </p>
+            </div>
           </div>
-          <blockquote className="text-lg font-medium text-foreground mb-2">
-            "La sérénité vient de l'intérieur. Ne la cherchez pas à l'extérieur."
-          </blockquote>
-          <cite className="text-muted-foreground">- Bouddha</cite>
         </CardContent>
       </Card>
     </div>
